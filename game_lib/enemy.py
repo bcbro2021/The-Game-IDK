@@ -22,6 +22,7 @@ class Enemy(gb.Entity):
 
         # gravity and jumping
         self.air_timer = 0
+        self.air_time_cap = 20
         self.y_momentum = int(self.data["ymomentum"])
         self.y_momentum_cap = 5
         self.jump_height = 4
@@ -42,13 +43,25 @@ class Enemy(gb.Entity):
         self.weapon.flip_x = self.mleft
         self.weapon.draw(surf)
 
-    def movement(self,tiles) -> None:
+    def movement(self,tiles,player) -> None:
+        # ai
+        self.mright = False
+        self.mleft = False
+        if player.rect.x > self.rect.x + 5:
+            self.mright = True
+        elif player.rect.x < self.rect.x - 5:
+            self.mleft = True
+        if not player.rect.x < self.rect.x - 20 or not player.rect.x > self.rect.x + 20:
+            if player.rect.y < self.rect.y:
+                if self.air_timer < self.air_time_cap:
+                    self.y_momentum = -4
+
         # movement
         self.pmovement = [0,0]
         if self.mleft:
-            self.pmovement[0] -= 2
+            self.pmovement[0] -= self.speed
         if self.mright:
-            self.pmovement[0] += 2
+            self.pmovement[0] += self.speed
 
         # gravity
         self.pmovement[1] += self.y_momentum
@@ -85,7 +98,7 @@ class Enemy(gb.Entity):
 
         # movement
         self.scroll = player.scroll
-        self.movement(tiles)
+        self.movement(tiles,player)
 
     def plane_collide_test(self,player):
         return gb.collision(self.rect,player.plane[0]+player.scroll[0],player.plane[1]+player.scroll[1],player.plane[2])
