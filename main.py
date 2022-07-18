@@ -303,9 +303,12 @@ def game_mode():
 
     # updating
     player.update(dis,collidables,dis_size)
-    for enemy in enemies:
-        if enemy.plane_collide_test(player):
-            enemy.update(collidables,player)
+    for i in range(len(enemies)):
+        for j in range(len(enemies)):
+            if i != j:
+                if enemies[i].collide_rect(enemies[j]):
+                    enemies[i].rect.x += 10
+        enemies[i].update(collidables,player)
 
     # GUI rendering
     pause_btn.draw(dis)

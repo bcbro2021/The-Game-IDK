@@ -100,6 +100,10 @@ class Enemy(gb.Entity):
         self.scroll = player.scroll
         self.movement(tiles,player)
 
+        # enemy respawn
+        if self.rect.y > 1000:
+            self.rect.y = self.pos[1]
+
     def plane_collide_test(self,player):
         return gb.collision(self.rect,player.plane[0]+player.scroll[0],player.plane[1]+player.scroll[1],player.plane[2])
 
